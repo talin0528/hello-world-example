@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        withMaven(maven: 'm3', publisherStrategy: 'EXPLICIT')
+        withMaven(maven: 'M3', publisherStrategy: 'EXPLICIT')
         bat 'mvn clean install'
       }
     }
