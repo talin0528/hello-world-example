@@ -1,24 +1,17 @@
-pipeline {
-  agent {
-    node {
-      label 'master'
+node ('master') {
+  checkout scm
+  stage('Build') {
+    withMaven(maven: 'M3') {
+      
+      if (isUnix()) {
+        sh 'mvn -Dmaven.test.failure.ignore clean package'
+      } else {
+        bat 'mvn -Dmaven.test.failure.ignore clean package'
+      }
     }
-
   }
-  stages {
-    stage('Build') {
-      steps {
-        withMaven(maven: 'M3', publisherStrategy: 'EXPLICIT')
-        bat 'mvn clean install'
-      }
-    }
-
-    stage('Result') {
-      steps {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archiveArtifacts 'target/*.jar'
-      }
-    }
-
+  stage('Results') {
+    junit '**/target/surefire-reports/TEST-*.xml'
+    archive 'target/*.jar'
   }
 }
